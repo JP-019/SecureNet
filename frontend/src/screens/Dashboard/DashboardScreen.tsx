@@ -269,6 +269,87 @@ export const DashboardScreen: React.FC = () => {
     setGroupMessageText('');
   };
 
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const newMsg: Message = {
+          id: Date.now().toString(),
+          contenido: reader.result as string,
+          timestamp: new Date().toISOString(),
+          leido: true,
+          esMio: true,
+          tipo: 'imagen',
+          archivoNombre: file.name,
+          grupoId: selectedGroup?.id
+        };
+        if (selectedGroup) {
+          setGroupMessages(prev => [...prev, newMsg]);
+        } else if (selectedChat) {
+          setMessages(prev => [...prev, newMsg]);
+        }
+        showToast('Imagen enviada', 'success');
+      };
+      reader.readAsDataURL(file);
+    }
+    setShowFileMenu(false);
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const newMsg: Message = {
+          id: Date.now().toString(),
+          contenido: reader.result as string,
+          timestamp: new Date().toISOString(),
+          leido: true,
+          esMio: true,
+          tipo: 'archivo',
+          archivoNombre: file.name,
+          grupoId: selectedGroup?.id
+        };
+        if (selectedGroup) {
+          setGroupMessages(prev => [...prev, newMsg]);
+        } else if (selectedChat) {
+          setMessages(prev => [...prev, newMsg]);
+        }
+        showToast(`Archivo: ${file.name}`, 'success');
+      };
+      reader.readAsDataURL(file);
+    }
+    setShowFileMenu(false);
+  };
+
+  const handleVideoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const newMsg: Message = {
+          id: Date.now().toString(),
+          contenido: reader.result as string,
+          timestamp: new Date().toISOString(),
+          leido: true,
+          esMio: true,
+          tipo: 'video',
+          archivoNombre: file.name,
+          grupoId: selectedGroup?.id
+        };
+        if (selectedGroup) {
+          setGroupMessages(prev => [...prev, newMsg]);
+        } else if (selectedChat) {
+          setMessages(prev => [...prev, newMsg]);
+        }
+        showToast('Video enviado', 'success');
+      };
+      reader.readAsDataURL(file);
+    }
+    setShowFileMenu(false);
+  };
+
   const handleKeyPress = (e: React.KeyboardEvent) => { if (e.key === 'Enter') { e.preventDefault(); handleSendMessage(); } };
 
   const [showVoiceRecorder, setShowVoiceRecorder] = useState(false);
@@ -771,9 +852,9 @@ export const DashboardScreen: React.FC = () => {
           imageInputRef={imageInputRef}
           fileInputRef={fileInputRef}
           videoInputRef={videoInputRef}
-          onImageSelect={() => {}}
-          onFileSelect={() => {}}
-          onVideoSelect={() => {}}
+          onImageSelect={handleImageSelect}
+          onFileSelect={handleFileSelect}
+          onVideoSelect={handleVideoSelect}
           canManageGroup={canManageGroup}
           isPinned={selectedGroup ? pinnedGroups.includes(selectedGroup.id) : false}
           isArchived={selectedGroup ? archivedGroups.includes(selectedGroup.id) : false}
