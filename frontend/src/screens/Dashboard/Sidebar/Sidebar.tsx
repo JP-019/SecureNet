@@ -79,17 +79,28 @@ export const Sidebar: React.FC<SidebarProps> = ({
       )}
       {equipos.map(eq => {
         const isPinned = pinnedGroupIds.includes(eq.id);
+        const isSelected = selectedGroupId === eq.id;
         return (
         <div 
           key={eq.id}
           onClick={() => onSelectGroup(eq)}
           style={{ 
             padding: 15, 
-            background: selectedGroupId === eq.id ? COLORS.gray700 : COLORS.gray800, 
+            background: isSelected ? COLORS.gray700 : COLORS.gray800, 
             borderRadius: 10, 
             cursor: 'pointer', 
-            border: selectedGroupId === eq.id ? `1px solid ${COLORS.primary}` : isPinned ? `2px solid ${COLORS.purple}` : '1px solid transparent',
-            borderLeft: isPinned ? `4px solid ${COLORS.purple}` : undefined
+            borderTopWidth: 1,
+            borderBottomWidth: 1,
+            borderLeftWidth: isPinned ? 4 : (isSelected ? 1 : 0),
+            borderRightWidth: 1,
+            borderTopStyle: isSelected ? 'solid' : 'solid',
+            borderBottomStyle: isSelected ? 'solid' : 'solid',
+            borderLeftStyle: 'solid',
+            borderRightStyle: isSelected ? 'solid' : 'solid',
+            borderTopColor: isSelected ? COLORS.primary : 'transparent',
+            borderBottomColor: isSelected ? COLORS.primary : 'transparent',
+            borderLeftColor: isPinned ? COLORS.purple : (isSelected ? COLORS.primary : 'transparent'),
+            borderRightColor: isSelected ? COLORS.primary : 'transparent'
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -123,20 +134,31 @@ export const Sidebar: React.FC<SidebarProps> = ({
     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
       {conversations.map(convo => {
         const isPinned = pinnedChatIds.includes(convo.usuarioId);
+        const isSelected = selectedChatId === convo.usuarioId;
         return (
         <div 
           key={convo.usuarioId}
           onClick={() => onSelectChat(convo)}
           style={{ 
             padding: 15, 
-            background: selectedChatId === convo.usuarioId ? COLORS.gray700 : COLORS.gray800, 
+            background: isSelected ? COLORS.gray700 : COLORS.gray800, 
             borderRadius: 10, 
             cursor: 'pointer', 
             display: 'flex', 
             alignItems: 'center', 
             gap: 12,
-            border: selectedChatId === convo.usuarioId ? `1px solid ${COLORS.primary}` : isPinned ? `2px solid ${COLORS.purple}` : '1px solid transparent',
-            borderLeft: isPinned ? `4px solid ${COLORS.purple}` : undefined
+            borderTopWidth: 1,
+            borderBottomWidth: 1,
+            borderLeftWidth: isPinned ? 4 : (isSelected ? 1 : 0),
+            borderRightWidth: 1,
+            borderTopStyle: 'solid',
+            borderBottomStyle: 'solid',
+            borderLeftStyle: 'solid',
+            borderRightStyle: 'solid',
+            borderTopColor: isSelected ? COLORS.primary : 'transparent',
+            borderBottomColor: isSelected ? COLORS.primary : 'transparent',
+            borderLeftColor: isPinned ? COLORS.purple : (isSelected ? COLORS.primary : 'transparent'),
+            borderRightColor: isSelected ? COLORS.primary : 'transparent'
           }}
         >
           <Avatar name={convo.nombre} role={convo.rol} size="md" />
