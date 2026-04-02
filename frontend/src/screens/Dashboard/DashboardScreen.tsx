@@ -250,6 +250,7 @@ export const DashboardScreen: React.FC = () => {
   const handleSelectGroup = async (grupo: Equipo) => {
     setSelectedGroup(grupo);
     setSelectedChat(null);
+    setGroupMembersHistory([]);
     setGroupMessages([
       { id: '1', contenido: `Bienvenidos al grupo ${grupo.nombre}`, timestamp: new Date(Date.now() - 3600000).toISOString(), leido: true, esMio: false },
       { id: '2', contenido: 'Grupo creado exitosamente', timestamp: new Date(Date.now() - 1800000).toISOString(), leido: true, esMio: false },
@@ -489,15 +490,35 @@ export const DashboardScreen: React.FC = () => {
     }});
   };
 
+  const [groupMembersHistory, setGroupMembersHistory] = useState<{id: string, nombre: string, timestamp: string}[]>([]);
+
   const handleAddMemberToGroup = (userId: string) => {
     if (!selectedGroup) return;
     const userToAdd = users.find(u => u.id === userId);
     if (!userToAdd) return;
+    
     setEquipos(prev => prev.map(eq => eq.id === selectedGroup.id ? { ...eq, miembros: [...eq.miembros, { id: userToAdd.id, nombre: userToAdd.nombre, rol: userToAdd.rol, estado: userToAdd.estado }] } : eq));
     setSelectedGroup(prev => prev ? { ...prev, miembros: [...prev.miembros, { id: userToAdd.id, nombre: userToAdd.nombre, rol: userToAdd.rol, estado: userToAdd.estado }] } : null);
+    
+    const newMember = { id: userToAdd.id, nombre: userToAdd.nombre, timestamp: new Date().toISOString() };
+    const updatedHistory = [...groupMembersHistory, newMember];
+    setGroupMembersHistory(updatedHistory);
+    
+    const memberNames = updatedHistory.map(m => m.nombre);
+    let systemContent: string;
+    if (memberNames.length === 1) {
+      systemContent = `El usuario ${memberNames[0]} se ha unido al grupo`;
+    } else if (memberNames.length === 2) {
+      systemContent = `${memberNames[0]} y ${memberNames[1]} se han unido al grupo`;
+    } else if (memberNames.length <= 4) {
+      systemContent = `${memberNames.slice(0, -1).join(', ')} y ${memberNames[memberNames.length - 1]} se han unido al grupo`;
+    } else {
+      systemContent = `${memberNames.slice(0, 3).join(', ')} y ${memberNames.length - 3} más se han unido al grupo`;
+    }
+    
     const systemMsg: Message = {
       id: Date.now().toString(),
-      contenido: `El usuario ${userToAdd.nombre} ha sido agregado al grupo`,
+      contenido: systemContent,
       timestamp: new Date().toISOString(),
       leido: true,
       esMio: false,
@@ -786,8 +807,6 @@ export const DashboardScreen: React.FC = () => {
             <i className="fas fa-building" /><span>TechCorp Industries</span>
           </div>
           {(user?.rol === 'admin' || user?.rol === 'owner') && <Button variant="secondary" size="sm" icon="fa-chart-line" onClick={() => setShowAdminPanel(!showAdminPanel)} style={{ background: 'rgba(255,255,255,0.2)', color: 'white', border: 'none' }}>Panel de Control</Button>}
-          <button title="Configuración" onClick={() => showToast('Configuración', 'info')} style={{ width: 40, height: 40, borderRadius: '50%', background: 'rgba(255,255,255,0.2)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><i className="fas fa-cog" style={{ color: 'white' }} /></button>
-          <button title="Llamada" onClick={() => showToast('Llamada de voz', 'info')} style={{ width: 40, height: 40, borderRadius: '50%', background: 'rgba(255,255,255,0.2)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><i className="fas fa-phone" style={{ color: 'white' }} /></button>
           <div style={{ position: 'relative' }} onClick={() => setShowProfileModal(true)}>
             <Avatar name={user?.nombre || ''} role={user?.rol} size="lg" />
             <div style={{ position: 'absolute', bottom: 0, right: 0, width: 14, height: 14, borderRadius: '50%', backgroundColor: user?.estado === 'active' ? COLORS.green : COLORS.gray400, border: '2px solid white' }} />
