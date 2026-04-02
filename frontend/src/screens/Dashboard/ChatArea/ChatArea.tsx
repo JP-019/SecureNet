@@ -108,74 +108,7 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
     }
   };
 
-  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const newMsg: Message = {
-          id: Date.now().toString(),
-          contenido: reader.result as string,
-          timestamp: new Date().toISOString(),
-          leido: true,
-          esMio: true,
-          tipo: 'imagen',
-          archivoNombre: file.name
-        };
-        addMessage(newMsg);
-        onShowToast('Imagen enviada', 'success');
-      };
-      reader.readAsDataURL(file);
-    }
-    onFileMenuToggle();
-  };
-
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const newMsg: Message = {
-          id: Date.now().toString(),
-          contenido: reader.result as string,
-          timestamp: new Date().toISOString(),
-          leido: true,
-          esMio: true,
-          tipo: 'archivo',
-          archivoNombre: file.name
-        };
-        addMessage(newMsg);
-        onShowToast(`Archivo: ${file.name}`, 'success');
-      };
-      reader.readAsDataURL(file);
-    }
-    onFileMenuToggle();
-  };
-
-  const handleVideoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const newMsg: Message = {
-          id: Date.now().toString(),
-          contenido: reader.result as string,
-          timestamp: new Date().toISOString(),
-          leido: true,
-          esMio: true,
-          tipo: 'video',
-          archivoNombre: file.name
-        };
-        addMessage(newMsg);
-        onShowToast('Video enviado', 'success');
-      };
-      reader.readAsDataURL(file);
-    }
-    onFileMenuToggle();
-  };
-
-  if (!selectedChat && !selectedGroup) {
-    return (
+  return (
       <div style={{ 
         flex: 1, 
         display: 'flex', 
@@ -230,9 +163,9 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
         imageInputRef={imageInputRef}
         fileInputRef={fileInputRef}
         videoInputRef={videoInputRef}
-        onImageSelect={handleImageSelect}
-        onFileSelect={handleFileSelect}
-        onVideoSelect={handleVideoSelect}
+        onImageSelect={onImageSelect}
+        onFileSelect={onFileSelect}
+        onVideoSelect={onVideoSelect}
         placeholder={selectedGroup ? 'Escribe al grupo...' : 'Escribe un mensaje...'}
       />
     </div>

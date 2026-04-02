@@ -138,7 +138,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                   type="file" 
                   accept="image/*" 
                   style={{ display: 'none' }} 
-                  onChange={(e) => { const file = e.target.files?.[0]; if (file) { console.log('Calling onImageSelect with file:', file.name); onImageSelect?.(e); } }} 
+                  onChange={(e) => { const file = e.target.files?.[0]; if (file) onImageSelect?.(e); }} 
                 />
                 <button 
                   onClick={() => imageInputRef.current?.click()} 
