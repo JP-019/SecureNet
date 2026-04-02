@@ -95,6 +95,7 @@ export const DashboardScreen: React.FC = () => {
   const [showFileMenu, setShowFileMenu] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
+  const videoInputRef = useRef<HTMLInputElement>(null);
   const voiceInputRef = useRef<HTMLInputElement>(null);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showCreateGroupModal, setShowCreateGroupModal] = useState(false);
@@ -169,7 +170,6 @@ export const DashboardScreen: React.FC = () => {
   const [showQRCode, setShowQRCode] = useState(false);
   const [qrCodeData, setQrCodeData] = useState<string>('');
   const [qrScannerTarget, setQrScannerTarget] = useState<'chat' | 'group' | null>(null);
-  const videoInputRef = useRef<HTMLInputElement>(null);
 
   const [showAddMapModal, setShowAddMapModal] = useState(false);
   const [newMapPoint, setNewMapPoint] = useState<MapPointInput>({ nombre: '', lat: '', lng: '', tipo: 'Punto' });
@@ -415,6 +415,16 @@ export const DashboardScreen: React.FC = () => {
     setConfirmDialog({ visible: true, title: 'Eliminar Miembro', message: `¿Eliminar a ${memberName} del grupo?`, type: 'danger', onConfirm: () => {
       setEquipos(prev => prev.map(eq => eq.id === selectedGroup.id ? { ...eq, miembros: eq.miembros.filter(m => m.id !== memberId) } : eq));
       setSelectedGroup(prev => prev ? { ...prev, miembros: prev.miembros.filter(m => m.id !== memberId) } : null);
+      const systemMsg: Message = {
+        id: Date.now().toString(),
+        contenido: `El usuario ${memberName} ha sido expulsado del grupo`,
+        timestamp: new Date().toISOString(),
+        leido: true,
+        esMio: false,
+        tipo: 'sistema',
+        emisorNombre: 'Sistema'
+      };
+      setGroupMessages(prev => [...prev, systemMsg]);
       setConfirmDialog(prev => ({ ...prev, visible: false }));
       showToast(`${memberName} eliminado del grupo`, 'success');
     }});
@@ -426,6 +436,16 @@ export const DashboardScreen: React.FC = () => {
     if (!userToAdd) return;
     setEquipos(prev => prev.map(eq => eq.id === selectedGroup.id ? { ...eq, miembros: [...eq.miembros, { id: userToAdd.id, nombre: userToAdd.nombre, rol: userToAdd.rol, estado: userToAdd.estado }] } : eq));
     setSelectedGroup(prev => prev ? { ...prev, miembros: [...prev.miembros, { id: userToAdd.id, nombre: userToAdd.nombre, rol: userToAdd.rol, estado: userToAdd.estado }] } : null);
+    const systemMsg: Message = {
+      id: Date.now().toString(),
+      contenido: `El usuario ${userToAdd.nombre} ha sido agregado al grupo`,
+      timestamp: new Date().toISOString(),
+      leido: true,
+      esMio: false,
+      tipo: 'sistema',
+      emisorNombre: 'Sistema'
+    };
+    setGroupMessages(prev => [...prev, systemMsg]);
     showToast(`${userToAdd.nombre} agregado al grupo`, 'success');
   };
 

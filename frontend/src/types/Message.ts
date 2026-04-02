@@ -16,7 +16,7 @@ export interface Message {
   timestamp: string;
   leido: boolean;
   esMio: boolean;
-  tipo?: 'texto' | 'imagen' | 'audio' | 'archivo' | 'video';
+  tipo?: 'texto' | 'imagen' | 'audio' | 'archivo' | 'video' | 'sistema';
   remitente?: { id: string; nombre: string };
   emisorId?: string;
   receptorId?: string;

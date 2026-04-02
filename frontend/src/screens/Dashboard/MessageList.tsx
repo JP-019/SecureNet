@@ -108,12 +108,12 @@ export const MessageList: React.FC<MessageListProps> = ({
             <i className="fas fa-file" style={{ color: 'white', fontSize: 20 }} />
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ color: 'white', fontSize: 13, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {msg.contenido.split(',').pop()?.substring(0, 30) || 'Archivo'}
+                {msg.archivoNombre?.split(',').pop()?.substring(0, 30) || 'Archivo'}
               </div>
             </div>
             <a 
               href={msg.contenido} 
-              download="archivo"
+              download={msg.archivoNombre || "archivo"}
               style={{ 
                 padding: '6px 10px', 
                 background: COLORS.green, 
@@ -128,6 +128,26 @@ export const MessageList: React.FC<MessageListProps> = ({
             >
               <i className="fas fa-download" /> Descargar
             </a>
+          </div>
+        );
+      case 'sistema':
+        return (
+          <div style={{ 
+            textAlign: 'center',
+            padding: '8px 16px',
+            margin: '8px 0'
+          }}>
+            <span style={{ 
+              background: COLORS.gray600 + '80',
+              color: COLORS.gray200,
+              padding: '6px 12px',
+              borderRadius: 20,
+              fontSize: 12,
+              fontStyle: 'italic'
+            }}>
+              <i className="fas fa-info-circle" style={{ marginRight: 6 }} />
+              {msg.contenido}
+            </span>
           </div>
         );
       default:
