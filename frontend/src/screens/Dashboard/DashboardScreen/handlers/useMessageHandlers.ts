@@ -2,19 +2,15 @@ import React from 'react';
 import { messageService } from '../../../../services';
 import type { Message, Conversation, Equipo } from '../../../../types';
 
-export interface MessageHandlers {
+export interface MessageHandlersProps {
   messageText: string;
   groupMessageText: string;
-  groupMessages: Message[];
   selectedChat: Conversation | null;
   selectedGroup: Equipo | null;
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
   setGroupMessages: React.Dispatch<React.SetStateAction<Message[]>>;
   setMessageText: React.Dispatch<React.SetStateAction<string>>;
   setGroupMessageText: React.Dispatch<React.SetStateAction<string>>;
-}
-
-export interface useMessageHandlersProps extends MessageHandlers {
   showToast: (msg: string, type: string) => void;
   user: { nombre: string } | null;
 }
@@ -22,7 +18,6 @@ export interface useMessageHandlersProps extends MessageHandlers {
 export const createMessageHandlers = ({
   messageText,
   groupMessageText,
-  groupMessages,
   selectedChat,
   selectedGroup,
   setMessages,
@@ -31,7 +26,7 @@ export const createMessageHandlers = ({
   setGroupMessageText,
   showToast,
   user
-}: useMessageHandlersProps) => {
+}: MessageHandlersProps) => {
   const handleSendMessage = async () => {
     if (!messageText.trim()) return;
     if (selectedChat) {
@@ -60,89 +55,46 @@ export const createMessageHandlers = ({
     setGroupMessageText('');
   };
 
-  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const newMsg: Message = {
-          id: Date.now().toString(),
-          contenido: reader.result as string,
-          timestamp: new Date().toISOString(),
-          leido: true,
-          esMio: true,
-          tipo: 'imagen',
-          archivoNombre: file.name,
-          grupoId: selectedGroup?.id
-        };
-        if (selectedGroup) {
-          setGroupMessages(prev => [...prev, newMsg]);
-        } else if (selectedChat) {
-          setMessages(prev => [...prev, newMsg]);
-        }
-        showToast('Imagen enviada', 'success');
-      };
-      reader.readAsDataURL(file);
-    }
+  const prepareFileMessage = (file: File, tipo: 'imagen' | 'video' | 'archivo' | 'audio'): Message => {
+    return {
+      id: Date.now().toString(),
+      contenido: '',
+      timestamp: new Date().toISOString(),
+      leido: true,
+      esMio: true,
+      tipo,
+      archivoNombre: file.name,
+      grupoId: selectedGroup?.id
+    };
   };
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const newMsg: Message = {
-          id: Date.now().toString(),
-          contenido: reader.result as string,
-          timestamp: new Date().toISOString(),
-          leido: true,
-          esMio: true,
-          tipo: 'archivo',
-          archivoNombre: file.name,
-          grupoId: selectedGroup?.id
-        };
-        if (selectedGroup) {
-          setGroupMessages(prev => [...prev, newMsg]);
-        } else if (selectedChat) {
-          setMessages(prev => [...prev, newMsg]);
-        }
-        showToast(`Archivo: ${file.name}`, 'success');
+  const sendFileMessage = (file: File, tipo: 'imagen' | 'video' | 'archivo' | 'audio') => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const newMsg: Message = {
+        id: Date.now().toString(),
+        contenido: reader.result as string,
+        timestamp: new Date().toISOString(),
+        leido: true,
+        esMio: true,
+        tipo,
+        archivoNombre: file.name,
+        grupoId: selectedGroup?.id
       };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleVideoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const newMsg: Message = {
-          id: Date.now().toString(),
-          contenido: reader.result as string,
-          timestamp: new Date().toISOString(),
-          leido: true,
-          esMio: true,
-          tipo: 'video',
-          archivoNombre: file.name,
-          grupoId: selectedGroup?.id
-        };
-        if (selectedGroup) {
-          setGroupMessages(prev => [...prev, newMsg]);
-        } else if (selectedChat) {
-          setMessages(prev => [...prev, newMsg]);
-        }
-        showToast('Video enviado', 'success');
-      };
-      reader.readAsDataURL(file);
-    }
+      if (selectedGroup) {
+        setGroupMessages(prev => [...prev, newMsg]);
+      } else if (selectedChat) {
+        setMessages(prev => [...prev, newMsg]);
+      }
+      showToast(`${tipo === 'imagen' ? 'Imagen' : tipo === 'video' ? 'Video' : tipo === 'audio' ? 'Audio' : 'Archivo'} enviado`, 'success');
+    };
+    reader.readAsDataURL(file);
   };
 
   return {
     handleSendMessage,
     handleSendGroupMessage,
-    handleImageSelect,
-    handleFileSelect,
-    handleVideoSelect
+    prepareFileMessage,
+    sendFileMessage
   };
 };

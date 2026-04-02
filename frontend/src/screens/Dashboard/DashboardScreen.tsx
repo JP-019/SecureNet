@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Avatar, StatusBadge, RoleBadge, Button, Toast, Card, Modal, LoadingSpinner, ConfirmDialog, QRCodeGenerator } from '../../components';
 import { ChatArea, Sidebar } from './index';
+import { FilePreviewModal } from './DashboardScreen/components/FilePreviewModal';
 import { useAuth } from '../../context/AuthContext';
 import { useToast, useMapPoints } from '../../hooks';
 import { playAlarm, playMessageSound } from '../../hooks/useSound';
@@ -172,6 +173,7 @@ export const DashboardScreen: React.FC = () => {
   const [showQRCode, setShowQRCode] = useState(false);
   const [qrCodeData, setQrCodeData] = useState<string>('');
   const [qrScannerTarget, setQrScannerTarget] = useState<'chat' | 'group' | null>(null);
+  const [pendingFile, setPendingFile] = useState<{ file: File; tipo: 'imagen' | 'video' | 'archivo' | 'audio' } | null>(null);
 
   const [showAddMapModal, setShowAddMapModal] = useState(false);
   const [newMapPoint, setNewMapPoint] = useState<MapPointInput>({ nombre: '', lat: '', lng: '', tipo: 'Punto' });
@@ -273,97 +275,57 @@ export const DashboardScreen: React.FC = () => {
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    console.log('handleImageSelect called', file?.name);
     if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const newMsg: Message = {
-          id: Date.now().toString(),
-          contenido: reader.result as string,
-          timestamp: new Date().toISOString(),
-          leido: true,
-          esMio: true,
-          tipo: 'imagen',
-          archivoNombre: file.name,
-          grupoId: selectedGroup?.id
-        };
-        console.log('Image selected, adding message:', newMsg.tipo);
-        if (selectedGroup) {
-          setGroupMessages(prev => {
-            const updated = [...prev, newMsg];
-            console.log('Group messages updated:', updated.length);
-            return updated;
-          });
-        } else if (selectedChat) {
-          setMessages(prev => {
-            const updated = [...prev, newMsg];
-            console.log('Chat messages updated:', updated.length);
-            return updated;
-          });
-        }
-        showToast('Imagen enviada', 'success');
-      };
-      reader.readAsDataURL(file);
+      setPendingFile({ file, tipo: 'imagen' });
     }
     setShowFileMenu(false);
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    console.log('handleFileSelect called', file?.name);
     if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const newMsg: Message = {
-          id: Date.now().toString(),
-          contenido: reader.result as string,
-          timestamp: new Date().toISOString(),
-          leido: true,
-          esMio: true,
-          tipo: 'archivo',
-          archivoNombre: file.name,
-          grupoId: selectedGroup?.id
-        };
-        console.log('File selected, adding message:', newMsg.tipo);
-        if (selectedGroup) {
-          setGroupMessages(prev => [...prev, newMsg]);
-        } else if (selectedChat) {
-          setMessages(prev => [...prev, newMsg]);
-        }
-        showToast(`Archivo: ${file.name}`, 'success');
-      };
-      reader.readAsDataURL(file);
+      setPendingFile({ file, tipo: 'archivo' });
     }
     setShowFileMenu(false);
   };
 
   const handleVideoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    console.log('handleVideoSelect called', file?.name);
     if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const newMsg: Message = {
-          id: Date.now().toString(),
-          contenido: reader.result as string,
-          timestamp: new Date().toISOString(),
-          leido: true,
-          esMio: true,
-          tipo: 'video',
-          archivoNombre: file.name,
-          grupoId: selectedGroup?.id
-        };
-        console.log('Video selected, adding message:', newMsg.tipo);
-        if (selectedGroup) {
-          setGroupMessages(prev => [...prev, newMsg]);
-        } else if (selectedChat) {
-          setMessages(prev => [...prev, newMsg]);
-        }
-        showToast('Video enviado', 'success');
-      };
-      reader.readAsDataURL(file);
+      setPendingFile({ file, tipo: 'video' });
     }
     setShowFileMenu(false);
+  };
+
+  const handleConfirmFileSend = () => {
+    if (!pendingFile) return;
+    const { file, tipo } = pendingFile;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const newMsg: Message = {
+        id: Date.now().toString(),
+        contenido: reader.result as string,
+        timestamp: new Date().toISOString(),
+        leido: true,
+        esMio: true,
+        tipo,
+        archivoNombre: file.name,
+        grupoId: selectedGroup?.id
+      };
+      if (selectedGroup) {
+        setGroupMessages(prev => [...prev, newMsg]);
+      } else if (selectedChat) {
+        setMessages(prev => [...prev, newMsg]);
+      }
+      const tipoLabel = tipo === 'imagen' ? 'Imagen' : tipo === 'video' ? 'Video' : tipo === 'audio' ? 'Audio' : 'Archivo';
+      showToast(`${tipoLabel} enviado`, 'success');
+    };
+    reader.readAsDataURL(file);
+    setPendingFile(null);
+  };
+
+  const handleCancelFileSend = () => {
+    setPendingFile(null);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => { if (e.key === 'Enter') { e.preventDefault(); handleSendMessage(); } };
@@ -1403,6 +1365,13 @@ export const DashboardScreen: React.FC = () => {
           </div>
         </div>
       </Modal>
+
+      <FilePreviewModal
+        visible={!!pendingFile}
+        file={pendingFile?.file || null}
+        onConfirm={handleConfirmFileSend}
+        onCancel={handleCancelFileSend}
+      />
     </div>
   );
 };
