@@ -82,7 +82,10 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
   const activeMessages = selectedGroup 
     ? messages.filter(m => m.grupoId === selectedGroup.id)
     : selectedChat 
-      ? messages.filter(m => m.emisorId === selectedChat.usuarioId || m.receptorId === selectedChat.usuarioId)
+      ? messages.filter(m => 
+          (m.emisorId === selectedChat.usuarioId || m.receptorId === selectedChat.usuarioId) ||
+          (m.esMio && !m.emisorId && !m.receptorId && !m.grupoId)
+        )
       : [];
 
   const addMessage = (msg: Message) => {
@@ -111,7 +114,8 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
           timestamp: new Date().toISOString(),
           leido: true,
           esMio: true,
-          tipo: 'imagen'
+          tipo: 'imagen',
+          archivoNombre: file.name
         };
         addMessage(newMsg);
         onShowToast('Imagen enviada', 'success');
@@ -132,7 +136,8 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
           timestamp: new Date().toISOString(),
           leido: true,
           esMio: true,
-          tipo: 'archivo'
+          tipo: 'archivo',
+          archivoNombre: file.name
         };
         addMessage(newMsg);
         onShowToast(`Archivo: ${file.name}`, 'success');
@@ -153,7 +158,8 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
           timestamp: new Date().toISOString(),
           leido: true,
           esMio: true,
-          tipo: 'video'
+          tipo: 'video',
+          archivoNombre: file.name
         };
         addMessage(newMsg);
         onShowToast('Video enviado', 'success');

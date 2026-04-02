@@ -22,4 +22,5 @@ export interface Message {
   receptorId?: string;
   grupoId?: string;
   emisorNombre?: string;
+  archivoNombre?: string;
 }

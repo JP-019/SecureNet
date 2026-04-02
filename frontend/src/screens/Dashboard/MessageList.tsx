@@ -25,17 +25,32 @@ export const MessageList: React.FC<MessageListProps> = ({
             height: 300, 
             borderRadius: 10, 
             overflow: 'hidden',
-            background: COLORS.gray700 
+            background: COLORS.gray700,
+            position: 'relative'
           }}>
             <img 
               src={msg.contenido} 
-              alt="imagen" 
+              alt={msg.archivoNombre || "imagen"} 
               style={{ 
                 width: '100%', 
                 height: '100%', 
                 objectFit: 'cover' 
               }} 
             />
+            {msg.archivoNombre && (
+              <div style={{ 
+                position: 'absolute', 
+                bottom: 0, 
+                left: 0, 
+                right: 0, 
+                background: 'rgba(0,0,0,0.6)', 
+                padding: '4px 8px',
+                fontSize: 10,
+                color: 'white'
+              }}>
+                {msg.archivoNombre}
+              </div>
+            )}
           </div>
         );
       case 'video':
@@ -44,7 +59,8 @@ export const MessageList: React.FC<MessageListProps> = ({
             width: 300, 
             borderRadius: 10, 
             overflow: 'hidden',
-            background: COLORS.gray700 
+            background: COLORS.gray700,
+            position: 'relative'
           }}>
             <video 
               controls 
@@ -54,6 +70,20 @@ export const MessageList: React.FC<MessageListProps> = ({
                 display: 'block' 
               }} 
             />
+            {msg.archivoNombre && (
+              <div style={{ 
+                position: 'absolute', 
+                bottom: 40, 
+                left: 0, 
+                right: 0, 
+                background: 'rgba(0,0,0,0.6)', 
+                padding: '4px 8px',
+                fontSize: 10,
+                color: 'white'
+              }}>
+                {msg.archivoNombre}
+              </div>
+            )}
           </div>
         );
       case 'audio':
@@ -72,10 +102,32 @@ export const MessageList: React.FC<MessageListProps> = ({
             background: msg.esMio ? COLORS.primary : COLORS.gray700, 
             display: 'flex', 
             alignItems: 'center', 
-            gap: 8 
+            gap: 8,
+            maxWidth: 300
           }}>
-            <i className="fas fa-file" style={{ color: 'white' }} />
-            <span style={{ color: 'white', fontSize: 13 }}>{msg.contenido}</span>
+            <i className="fas fa-file" style={{ color: 'white', fontSize: 20 }} />
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ color: 'white', fontSize: 13, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {msg.contenido.split(',').pop()?.substring(0, 30) || 'Archivo'}
+              </div>
+            </div>
+            <a 
+              href={msg.contenido} 
+              download="archivo"
+              style={{ 
+                padding: '6px 10px', 
+                background: COLORS.green, 
+                borderRadius: 6, 
+                color: 'white', 
+                fontSize: 11,
+                textDecoration: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 4
+              }}
+            >
+              <i className="fas fa-download" /> Descargar
+            </a>
           </div>
         );
       default:
