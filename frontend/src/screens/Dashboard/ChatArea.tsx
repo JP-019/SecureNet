@@ -83,10 +83,11 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
     ? messages.filter(m => m.grupoId === selectedGroup.id)
     : selectedChat 
       ? messages.filter(m => 
-          (m.emisorId === selectedChat.usuarioId || m.receptorId === selectedChat.usuarioId) ||
-          (m.esMio && !m.emisorId && !m.receptorId && !m.grupoId)
+          m.emisorId === selectedChat.usuarioId || 
+          m.receptorId === selectedChat.usuarioId ||
+          (m.emisorId === undefined && m.receptorId === undefined && !m.grupoId)
         )
-      : [];
+      : messages;
 
   const addMessage = (msg: Message) => {
     if (selectedGroup) {
