@@ -108,7 +108,8 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
     }
   };
 
-  return (
+  if (!selectedChat && !selectedGroup) {
+    return (
       <div style={{ 
         flex: 1, 
         display: 'flex', 
