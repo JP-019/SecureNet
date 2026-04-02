@@ -523,7 +523,8 @@ export const DashboardScreen: React.FC = () => {
       leido: true,
       esMio: false,
       tipo: 'sistema',
-      emisorNombre: 'Sistema'
+      emisorNombre: 'Sistema',
+      grupoId: selectedGroup.id
     };
     setGroupMessages(prev => [...prev, systemMsg]);
     showToast(`${userToAdd.nombre} agregado al grupo`, 'success');

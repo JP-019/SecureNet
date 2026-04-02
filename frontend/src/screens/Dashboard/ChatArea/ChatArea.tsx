@@ -84,7 +84,7 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
 }) => {
   const isGroup = !!selectedGroup;
   const activeMessages = selectedGroup 
-    ? messages.filter(m => m.grupoId === selectedGroup.id)
+    ? messages.filter(m => m.grupoId === selectedGroup.id || (m.tipo === 'sistema' && !m.grupoId))
     : selectedChat 
       ? messages.filter(m => 
           m.emisorId === selectedChat.usuarioId || 
