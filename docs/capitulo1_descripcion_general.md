@@ -54,7 +54,14 @@ SecureNet/
 │   │   ├── context/        # Contextos React (Auth)
 │   │   ├── hooks/          # Custom hooks
 │   │   ├── screens/        # Pantallas principales
-│   │   ├── services/       # Servicios API
+│   │   ├── services/       # Servicios API (organizados en sub-carpetas)
+│   │   │   ├── api.ts      # Configuración base
+│   │   │   ├── index.ts    # Exports
+│   │   │   ├── auth/       # authService
+│   │   │   ├── dashboard/  # dashboardService
+│   │   │   ├── equipo/     # equipoService
+│   │   │   ├── message/    # messageService
+│   │   │   └── user/       # userService
 │   │   ├── types/          # Definiciones TypeScript
 │   │   └── utils/         # Utilidades y constantes
 │   ├── dist/               # Build de producción

@@ -145,11 +145,47 @@ Desde el panel de equipo se puede:
 | Acción | Icono | Descripción |
 |--------|-------|--------------|
 | Fijar | 📌 | Mostrar equipo al inicio |
-| Archivar | 📦 | Ocultar equipo |
+| Archivar | 📦 | Ocultar equipo (accesible desde pestaña Archivados) |
 | Configurar | ⚙️ | Editar detalles |
 | Eliminar | 🗑️ | Eliminar equipo |
 
-## 4.7 Datos Mock de Equipos
+## 4.7 Sistema de Archivado
+
+### Pestaña Archivados
+Los equipos y chats archivados se pueden encontrar en una pestaña dedicada del Sidebar:
+
+```
+Sidebar:
+├── Equipos     (equipos activos)
+├── Chats       (conversaciones activas)
+├── Archivados  (grupos y chats archivados)
+└── Mapa        (ubicaciones)
+```
+
+### Comportamiento del Archivado
+- Al archivar un equipo, se mueve automáticamente a la lista de archivados
+- Desde "Archivados" se puede restaurar con el botón "Restaurar"
+- Los equipos archivados tienen标识 visual (borde amarillo)
+- La restauración mueve el equipo de vuelta a la lista activa
+
+### Funciones de Archivo
+```typescript
+const handleToggleArchiveGroup = (grupoId: string) => {
+  const equipo = equipos.find(eq => eq.id === grupoId);
+  if (archivedGroups.includes(grupoId)) {
+    // Restaurar
+    setArchivedGroups(prev => prev.filter(id => id !== grupoId));
+    setArchivedEquipos(prev => prev.filter(eq => eq.id !== grupoId));
+  } else {
+    // Archivar
+    setArchivedGroups(prev => [...prev, grupoId]);
+    setArchivedEquipos(prev => [...prev, equipo]);
+    setEquipos(prev => prev.filter(eq => eq.id !== grupoId));
+  }
+};
+```
+
+## 4.8 Datos Mock de Equipos
 
 ### Equipos de Ejemplo TechCorp
 ```javascript

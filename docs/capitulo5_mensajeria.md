@@ -100,6 +100,44 @@ const handleSendGroupMessage = () => {
 3. Crear mensaje con tipo 'imagen'
 
 ```typescript
+const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const newMsg: Message = {
+        id: Date.now().toString(),
+        contenido: reader.result as string,
+        tipo: 'imagen'
+      };
+      addMessage(newMsg);
+    };
+    reader.readAsDataURL(file);
+  }
+};
+```
+
+### Envío de Videos
+Similar a imágenes pero con tipo 'video':
+```typescript
+const handleVideoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const newMsg: Message = {
+        id: Date.now().toString(),
+        contenido: reader.result as string,
+        tipo: 'video'
+      };
+      addMessage(newMsg);
+    };
+    reader.readAsDataURL(file);
+  }
+};
+```
+
+```typescript
 const reader = new FileReader();
 reader.onload = () => {
   const newMsg: Message = {
