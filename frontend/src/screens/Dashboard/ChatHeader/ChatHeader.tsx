@@ -1,6 +1,6 @@
 import React from 'react';
-import { Avatar } from '../../components';
-import { COLORS } from '../../utils/constants';
+import { Avatar } from '../../../components';
+import { COLORS } from '../../../utils/constants';
 
 interface ChatHeaderProps {
   selectedChat: { usuarioId: string; nombre: string; rol: string } | null;

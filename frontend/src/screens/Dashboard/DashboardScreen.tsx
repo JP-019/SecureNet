@@ -107,6 +107,7 @@ export const DashboardScreen: React.FC = () => {
   const [memberProfile, setMemberProfile] = useState<User | null>(null);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [pinnedGroups, setPinnedGroups] = useState<string[]>([]);
+  const [pinnedChats, setPinnedChats] = useState<string[]>([]);
   const [archivedGroups, setArchivedGroups] = useState<string[]>([]);
   const [newUserData, setNewUserData] = useState({ nombre: '', usuario: '', identidad: '', telefono: '', email: '', password: '', rol: 'guardia' });
   const [confirmDialog, setConfirmDialog] = useState<{
@@ -589,6 +590,18 @@ export const DashboardScreen: React.FC = () => {
     }
   };
 
+  const handleTogglePinChat = (chatId: string) => {
+    if (pinnedChats.includes(chatId)) {
+      setPinnedChats(prev => prev.filter(id => id !== chatId));
+    } else {
+      if (pinnedChats.length >= 4) {
+        showToast('Máximo 4 chats fijados', 'info');
+        return;
+      }
+      setPinnedChats(prev => [...prev, chatId]);
+    }
+  };
+
   const handleToggleArchiveGroup = (grupoId: string) => {
     const equipo = equipos.find(eq => eq.id === grupoId);
     if (archivedGroups.includes(grupoId)) {
@@ -830,6 +843,8 @@ export const DashboardScreen: React.FC = () => {
           archivedConversations={archivedConversations}
           selectedGroupId={selectedGroup?.id}
           selectedChatId={selectedChat?.usuarioId}
+          pinnedGroupIds={pinnedGroups}
+          pinnedChatIds={pinnedChats}
           onSelectGroup={(eq) => { setSelectedGroup(eq); setSelectedChat(null); }}
           onSelectChat={(convo) => { setSelectedChat(convo); setSelectedGroup(null); }}
           onUnarchiveGroup={handleUnarchiveGroup}

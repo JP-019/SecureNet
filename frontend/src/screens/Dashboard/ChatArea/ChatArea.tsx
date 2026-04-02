@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { ChatHeader } from './ChatHeader';
-import { MessageList } from './MessageList';
-import { ChatInput } from './ChatInput';
-import { COLORS } from '../../utils/constants';
-import type { Message } from '../../types';
+import { ChatHeader } from '../ChatHeader/ChatHeader';
+import { MessageList } from '../MessageList/MessageList';
+import { ChatInput } from '../ChatInput/ChatInput';
+import { COLORS } from '../../../utils/constants';
+import type { Message } from '../../../types';
 
 interface ChatAreaProps {
   selectedChat: { usuarioId: string; nombre: string; rol: string } | null;

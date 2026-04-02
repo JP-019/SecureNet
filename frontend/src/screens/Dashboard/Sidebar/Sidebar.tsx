@@ -1,7 +1,7 @@
 import React from 'react';
-import { Avatar } from '../../components';
-import { COLORS } from '../../utils/constants';
-import type { Equipo, Conversation } from '../../types';
+import { Avatar } from '../../../components';
+import { COLORS } from '../../../utils/constants';
+import type { Equipo, Conversation } from '../../../types';
 
 interface SidebarProps {
   activeTab: 'teams' | 'chats' | 'map' | 'archived';
@@ -12,6 +12,8 @@ interface SidebarProps {
   archivedConversations?: Conversation[];
   selectedGroupId?: string;
   selectedChatId?: string;
+  pinnedGroupIds?: string[];
+  pinnedChatIds?: string[];
   onSelectGroup: (equipo: Equipo) => void;
   onSelectChat: (convo: Conversation) => void;
   onUnarchiveGroup?: (equipoId: string) => void;
@@ -33,6 +35,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   archivedConversations = [],
   selectedGroupId,
   selectedChatId,
+  pinnedGroupIds = [],
+  pinnedChatIds = [],
   onSelectGroup,
   onSelectChat,
   onUnarchiveGroup,
@@ -73,7 +77,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <i className="fas fa-plus" /> Nuevo Equipo
         </button>
       )}
-      {equipos.map(eq => (
+      {equipos.map(eq => {
+        const isPinned = pinnedGroupIds.includes(eq.id);
+        return (
         <div 
           key={eq.id}
           onClick={() => onSelectGroup(eq)}
@@ -82,7 +88,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
             background: selectedGroupId === eq.id ? COLORS.gray700 : COLORS.gray800, 
             borderRadius: 10, 
             cursor: 'pointer', 
-            border: selectedGroupId === eq.id ? `1px solid ${COLORS.primary}` : '1px solid transparent' 
+            border: selectedGroupId === eq.id ? `1px solid ${COLORS.primary}` : isPinned ? `2px solid ${COLORS.purple}` : '1px solid transparent',
+            borderLeft: isPinned ? `4px solid ${COLORS.purple}` : undefined
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -90,7 +97,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               width: 40, 
               height: 40, 
               borderRadius: 10, 
-              background: COLORS.primary, 
+              background: isPinned ? COLORS.purple : COLORS.primary, 
               display: 'flex', 
               alignItems: 'center', 
               justifyContent: 'center' 
@@ -98,19 +105,25 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <i className="fas fa-users" style={{ color: 'white' }} />
             </div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontWeight: 600, fontSize: 14, color: COLORS.gray100 }}>{eq.nombre}</div>
+              <div style={{ fontWeight: 600, fontSize: 14, color: COLORS.gray100, display: 'flex', alignItems: 'center', gap: 6 }}>
+                {eq.nombre}
+                {isPinned && <i className="fas fa-thumbtack" style={{ color: COLORS.purple, fontSize: 10 }} />}
+              </div>
               <div style={{ fontSize: 11, color: COLORS.gray400 }}>{eq.miembros.length} miembros</div>
             </div>
             <i className="fas fa-chevron-right" style={{ color: COLORS.gray500, fontSize: 12 }} />
           </div>
         </div>
-      ))}
+        );
+      })}
     </div>
   );
 
   const renderChatsList = () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-      {conversations.map(convo => (
+      {conversations.map(convo => {
+        const isPinned = pinnedChatIds.includes(convo.usuarioId);
+        return (
         <div 
           key={convo.usuarioId}
           onClick={() => onSelectChat(convo)}
@@ -121,12 +134,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
             cursor: 'pointer', 
             display: 'flex', 
             alignItems: 'center', 
-            gap: 12 
+            gap: 12,
+            border: selectedChatId === convo.usuarioId ? `1px solid ${COLORS.primary}` : isPinned ? `2px solid ${COLORS.purple}` : '1px solid transparent',
+            borderLeft: isPinned ? `4px solid ${COLORS.purple}` : undefined
           }}
         >
           <Avatar name={convo.nombre} role={convo.rol} size="md" />
           <div style={{ flex: 1 }}>
-            <div style={{ fontWeight: 600, fontSize: 14, color: COLORS.gray100 }}>{convo.nombre}</div>
+            <div style={{ fontWeight: 600, fontSize: 14, color: COLORS.gray100, display: 'flex', alignItems: 'center', gap: 6 }}>
+              {convo.nombre}
+              {isPinned && <i className="fas fa-thumbtack" style={{ color: COLORS.purple, fontSize: 10 }} />}
+            </div>
             <div style={{ fontSize: 12, color: COLORS.gray400 }}>{convo.ultimoMensaje || 'Sin mensajes'}</div>
           </div>
           {convo.noLeidos > 0 && (
@@ -141,7 +159,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </span>
           )}
         </div>
-      ))}
+        );
+      })}
     </div>
   );
 

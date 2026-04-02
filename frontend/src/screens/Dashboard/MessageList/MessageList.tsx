@@ -1,6 +1,6 @@
 import React from 'react';
-import { COLORS } from '../../utils/constants';
-import type { Message } from '../../types';
+import { COLORS } from '../../../utils/constants';
+import type { Message } from '../../../types';
 
 interface MessageListProps {
   messages: Message[];

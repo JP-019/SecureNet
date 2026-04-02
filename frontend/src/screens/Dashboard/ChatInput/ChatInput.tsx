@@ -1,5 +1,5 @@
 import React, { RefObject } from 'react';
-import { COLORS } from '../../utils/constants';
+import { COLORS } from '../../../utils/constants';
 
 interface ChatInputProps {
   value: string;
