@@ -102,6 +102,7 @@ export const DashboardScreen: React.FC = () => {
   const [showEditUserModal, setShowEditUserModal] = useState(false);
   const [showCreateUserModal, setShowCreateUserModal] = useState(false);
   const [showGroupConfigModal, setShowGroupConfigModal] = useState(false);
+  const [showGroupMenu, setShowGroupMenu] = useState(false);
   const [showMemberProfileModal, setShowMemberProfileModal] = useState(false);
   const [memberProfile, setMemberProfile] = useState<User | null>(null);
   const [editingUser, setEditingUser] = useState<User | null>(null);
@@ -271,6 +272,7 @@ export const DashboardScreen: React.FC = () => {
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    console.log('handleImageSelect called', file?.name);
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
@@ -284,10 +286,19 @@ export const DashboardScreen: React.FC = () => {
           archivoNombre: file.name,
           grupoId: selectedGroup?.id
         };
+        console.log('Image selected, adding message:', newMsg.tipo);
         if (selectedGroup) {
-          setGroupMessages(prev => [...prev, newMsg]);
+          setGroupMessages(prev => {
+            const updated = [...prev, newMsg];
+            console.log('Group messages updated:', updated.length);
+            return updated;
+          });
         } else if (selectedChat) {
-          setMessages(prev => [...prev, newMsg]);
+          setMessages(prev => {
+            const updated = [...prev, newMsg];
+            console.log('Chat messages updated:', updated.length);
+            return updated;
+          });
         }
         showToast('Imagen enviada', 'success');
       };
@@ -298,6 +309,7 @@ export const DashboardScreen: React.FC = () => {
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    console.log('handleFileSelect called', file?.name);
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
@@ -311,6 +323,7 @@ export const DashboardScreen: React.FC = () => {
           archivoNombre: file.name,
           grupoId: selectedGroup?.id
         };
+        console.log('File selected, adding message:', newMsg.tipo);
         if (selectedGroup) {
           setGroupMessages(prev => [...prev, newMsg]);
         } else if (selectedChat) {
@@ -325,6 +338,7 @@ export const DashboardScreen: React.FC = () => {
 
   const handleVideoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    console.log('handleVideoSelect called', file?.name);
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
@@ -338,6 +352,7 @@ export const DashboardScreen: React.FC = () => {
           archivoNombre: file.name,
           grupoId: selectedGroup?.id
         };
+        console.log('Video selected, adding message:', newMsg.tipo);
         if (selectedGroup) {
           setGroupMessages(prev => [...prev, newMsg]);
         } else if (selectedChat) {
@@ -848,7 +863,6 @@ export const DashboardScreen: React.FC = () => {
           onVideoCall={() => showToast('Videollamada', 'info')}
           onInfo={() => showToast('Info', 'info')}
           onAlert={handleSendAlertToGroup}
-          onConfig={() => setShowGroupConfigModal(true)}
           imageInputRef={imageInputRef}
           fileInputRef={fileInputRef}
           videoInputRef={videoInputRef}
@@ -858,8 +872,11 @@ export const DashboardScreen: React.FC = () => {
           canManageGroup={canManageGroup}
           isPinned={selectedGroup ? pinnedGroups.includes(selectedGroup.id) : false}
           isArchived={selectedGroup ? archivedGroups.includes(selectedGroup.id) : false}
-          onPin={selectedGroup ? () => handleTogglePinGroup(selectedGroup.id) : undefined}
-          onArchive={selectedGroup ? () => handleToggleArchiveGroup(selectedGroup.id) : undefined}
+          onPin={selectedGroup ? () => { setShowGroupMenu(false); handleTogglePinGroup(selectedGroup.id); } : undefined}
+          onArchive={selectedGroup ? () => { setShowGroupMenu(false); handleToggleArchiveGroup(selectedGroup.id); } : undefined}
+          onConfig={() => { setShowGroupMenu(false); setShowGroupConfigModal(true); }}
+          showMenu={showGroupMenu}
+          onToggleMenu={() => setShowGroupMenu(!showGroupMenu)}
         />
 
         {showAdminPanel && (

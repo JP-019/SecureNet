@@ -40,6 +40,8 @@ interface ChatAreaProps {
   isArchived?: boolean;
   onPin?: () => void;
   onArchive?: () => void;
+  showMenu?: boolean;
+  onToggleMenu?: () => void;
 }
 
 export const ChatArea: React.FC<ChatAreaProps> = ({
@@ -76,7 +78,9 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
   isPinned,
   isArchived,
   onPin,
-  onArchive
+  onArchive,
+  showMenu,
+  onToggleMenu
 }) => {
   const isGroup = !!selectedGroup;
   const activeMessages = selectedGroup 
@@ -203,6 +207,8 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
         isArchived={isArchived}
         onPin={onPin}
         onArchive={onArchive}
+        showMenu={showMenu}
+        onToggleMenu={onToggleMenu}
       />
       
       <MessageList 

@@ -15,6 +15,8 @@ interface ChatHeaderProps {
   onPin?: () => void;
   onArchive?: () => void;
   isGroup?: boolean;
+  showMenu?: boolean;
+  onToggleMenu?: () => void;
 }
 
 export const ChatHeader: React.FC<ChatHeaderProps> = ({
@@ -29,7 +31,9 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
   isArchived,
   onPin,
   onArchive,
-  isGroup
+  isGroup,
+  showMenu,
+  onToggleMenu
 }) => {
   const title = selectedChat?.nombre || selectedGroup?.nombre || '';
   const subtitle = selectedChat 
@@ -69,76 +73,8 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
         </div>
       </div>
       <div style={{ display: 'flex', gap: 8 }}>
-        <button 
-          onClick={onCall} 
-          title="Llamada" 
-          style={{ 
-            width: 35, 
-            height: 35, 
-            borderRadius: '50%', 
-            background: COLORS.green + '40', 
-            border: 'none', 
-            cursor: 'pointer', 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center' 
-          }}
-        >
-          <i className="fas fa-phone" style={{ color: COLORS.green }} />
-        </button>
-        <button 
-          onClick={onVideoCall} 
-          title="Videollamada" 
-          style={{ 
-            width: 35, 
-            height: 35, 
-            borderRadius: '50%', 
-            background: COLORS.blue + '40', 
-            border: 'none', 
-            cursor: 'pointer', 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center' 
-          }}
-        >
-          <i className="fas fa-video" style={{ color: COLORS.blue }} />
-        </button>
         {isGroup && (
           <>
-            <button 
-              onClick={onPin} 
-              title={isPinned ? "Desfijar" : "Fijar"} 
-              style={{ 
-                width: 35, 
-                height: 35, 
-                borderRadius: '50%', 
-                background: isPinned ? COLORS.purple + '60' : COLORS.gray600 + '40', 
-                border: 'none', 
-                cursor: 'pointer', 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center' 
-              }}
-            >
-              <i className="fas fa-thumbtack" style={{ color: isPinned ? COLORS.purple : COLORS.gray400 }} />
-            </button>
-            <button 
-              onClick={onArchive} 
-              title={isArchived ? "Desarchivar" : "Archivar"} 
-              style={{ 
-                width: 35, 
-                height: 35, 
-                borderRadius: '50%', 
-                background: isArchived ? COLORS.yellow + '60' : COLORS.gray600 + '40', 
-                border: 'none', 
-                cursor: 'pointer', 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center' 
-              }}
-            >
-              <i className="fas fa-archive" style={{ color: isArchived ? COLORS.yellow : COLORS.gray400 }} />
-            </button>
             <button 
               onClick={onAlert} 
               title="Enviar Alerta" 
@@ -156,25 +92,108 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
             >
               <i className="fas fa-exclamation-triangle" style={{ color: COLORS.red }} />
             </button>
+            <div style={{ position: 'relative' }}>
+              <button 
+                onClick={onToggleMenu} 
+                title="Más opciones" 
+                style={{ 
+                  width: 35, 
+                  height: 35, 
+                  borderRadius: '50%', 
+                  background: COLORS.gray600 + '40', 
+                  border: 'none', 
+                  cursor: 'pointer', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center' 
+                }}
+              >
+                <i className="fas fa-ellipsis-v" style={{ color: COLORS.gray400 }} />
+              </button>
+              {showMenu && (
+                <div style={{ 
+                  position: 'absolute', 
+                  top: 40, 
+                  right: 0, 
+                  background: COLORS.gray700, 
+                  borderRadius: 8, 
+                  padding: 8, 
+                  minWidth: 160,
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                  zIndex: 100 
+                }}>
+                  <div 
+                    onClick={onPin} 
+                    style={{ 
+                      padding: '10px 12px', 
+                      cursor: 'pointer', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: 8,
+                      borderRadius: 6,
+                      color: 'white',
+                      fontSize: 13
+                    }}
+                  >
+                    <i className="fas fa-thumbtack" style={{ color: isPinned ? COLORS.purple : COLORS.gray400, width: 16 }} />
+                    {isPinned ? 'Desfijar' : 'Fijar'}
+                  </div>
+                  <div 
+                    onClick={onArchive} 
+                    style={{ 
+                      padding: '10px 12px', 
+                      cursor: 'pointer', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: 8,
+                      borderRadius: 6,
+                      color: 'white',
+                      fontSize: 13
+                    }}
+                  >
+                    <i className="fas fa-archive" style={{ color: isArchived ? COLORS.yellow : COLORS.gray400, width: 16 }} />
+                    {isArchived ? 'Desarchivar' : 'Archivar'}
+                  </div>
+                  <div 
+                    onClick={onConfig} 
+                    style={{ 
+                      padding: '10px 12px', 
+                      cursor: 'pointer', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: 8,
+                      borderRadius: 6,
+                      color: 'white',
+                      fontSize: 13
+                    }}
+                  >
+                    <i className="fas fa-cog" style={{ color: COLORS.gray400, width: 16 }} />
+                    Configuración
+                  </div>
+                </div>
+              )}
+            </div>
           </>
         )}
-        <button 
-          onClick={onConfig} 
-          title={isGroup ? 'Configurar Grupo' : 'Info'} 
-          style={{ 
-            width: 35, 
-            height: 35, 
-            borderRadius: '50%', 
-            background: COLORS.gray600 + '40', 
-            border: 'none', 
-            cursor: 'pointer', 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center' 
-          }}
-        >
-          <i className={isGroup ? 'fas fa-cog' : 'fas fa-info-circle'} style={{ color: COLORS.gray400 }} />
-        </button>
+        {!isGroup && onConfig && (
+          <button 
+            onClick={onConfig} 
+            title="Info" 
+            style={{ 
+              width: 35, 
+              height: 35, 
+              borderRadius: '50%', 
+              background: COLORS.gray600 + '40', 
+              border: 'none', 
+              cursor: 'pointer', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center' 
+            }}
+          >
+            <i className="fas fa-info-circle" style={{ color: COLORS.gray400 }} />
+          </button>
+        )}
       </div>
     </div>
   );

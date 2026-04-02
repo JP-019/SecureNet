@@ -138,7 +138,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                   type="file" 
                   accept="image/*" 
                   style={{ display: 'none' }} 
-                  onChange={onImageSelect} 
+                  onChange={(e) => { const file = e.target.files?.[0]; if (file) { console.log('Calling onImageSelect with file:', file.name); onImageSelect?.(e); } }} 
                 />
                 <button 
                   onClick={() => imageInputRef.current?.click()} 
@@ -158,7 +158,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                   ref={fileInputRef} 
                   type="file" 
                   style={{ display: 'none' }} 
-                  onChange={onFileSelect} 
+                  onChange={(e) => { const file = e.target.files?.[0]; if (file) onFileSelect?.(e); }} 
                 />
                 <button 
                   onClick={() => fileInputRef.current?.click()} 
@@ -179,7 +179,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                   type="file" 
                   accept="video/*" 
                   style={{ display: 'none' }} 
-                  onChange={onVideoSelect} 
+                  onChange={(e) => { const file = e.target.files?.[0]; if (file) onVideoSelect?.(e); }} 
                 />
                 <button 
                   onClick={() => videoInputRef?.current?.click()} 
